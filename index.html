@@ -78,36 +78,50 @@
   
   <script>
     let yesButtonSize = 1;
-    
+    let noButtonSize = 1;
+  
     function checkAnswers(answer) {
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+  
       if (answer === 'yes') {
-        // Navigate to slide2.html
         window.location.href = 'slide1.html';
-      } else if (answer === 'no') {
-        // Make the yes button bigger
+      } 
+      else if (answer === 'no') {
+  
+        // Grow YES button
         yesButtonSize += 0.2;
-        const yesBtn = document.getElementById('yesBtn');
         yesBtn.style.transform = `scale(${yesButtonSize})`;
         yesBtn.style.transition = 'transform 0.3s ease';
-        
-        // Optional: Add a shake animation to the no button
-        const noBtn = document.getElementById('noBtn');
-        noBtn.style.animation = 'shake 0.5s';
+  
+        // Shrink NO button
+        noButtonSize -= 0.15;
+  
+        if (noButtonSize > 0.2) {
+          noBtn.style.transform = `scale(${noButtonSize})`;
+          noBtn.style.transition = 'transform 0.3s ease';
+        } else {
+          noBtn.style.display = "none"; // Hide when too small
+        }
+  
+        // Shake NO button
+        noBtn.style.animation = 'shake 0.4s';
         setTimeout(() => {
           noBtn.style.animation = '';
-        }, 500);
+        }, 400);
       }
     }
-    
-    // Add shake animation
+  
+    // Shake animation
     const style = document.createElement('style');
     style.textContent = `
       @keyframes shake {
         0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
       }
     `;
     document.head.appendChild(style);
   </script>
+  
 </body>
