@@ -165,7 +165,18 @@
         <div class="absolute top-10 left-10 text-4xl animate-bounce">💖</div>
         <div class="absolute top-16 right-16 text-3xl animate-pulse">💗</div>
     
-        <div class="glass-effect rounded-3xl p-10 md:p-14 shadow-2xl relative overflow-hidden">
+        <div class="glass-effect rounded-3xl p-12 w-full flex flex-col justify-center shadow-2xl relative overflow-hidden">
+      
+          <!-- Background Image -->
+          <div class="absolute inset-0 
+                      bg-cover bg-center 
+                      md:bg-cover md:bg-center
+                      bg-[center_top] 
+                      opacity-50
+                      md:opacity-50 
+                      blur-l md:blur-l"
+              style="background-image: url('Valentines-Day/Pics/Rose.webp');">
+          </div>
     
             <!-- Soft overlay -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-lg"></div>
@@ -192,14 +203,16 @@
                 </div>
             </div>
 
-            <!-- Audio below the card -->
             <div class="mt-6 flex justify-center w-full">
               <div class="w-full max-w-md">
-                <audio id="backgroundMusic" controls loop preload="auto" class="w-full">
-                  <source src="Valentines-Day/Pics/kalapastangan.mp3" type="audio/mp3">
-                  Your browser does not support the audio element.
+                <audio id="backgroundMusic" autoplay loop preload="auto" class="w-full">
+                  <source src="Valentines-Day/Pics/About You Bridge Part.mp3" type="audio/mp3">
                 </audio>
-                <p class="text-s text-gray-500 text-center mt-2">Kalapastangan - fitterkarma 🎵</p>
+                <div class="h-16 flex items-center justify-center">
+                    <p id="lyricsDisplay" class="text-md font-medium text-pink-600 text-center mt-2 transition-opacity duration-500 opacity-0 italic">
+                        🎵 Click play for lyrics...
+                    </p>
+                </div>
               </div>
             </div>
 
@@ -208,14 +221,14 @@
             <div class="mt-10">
                 <button onclick="showLoveMessage()"
                 class="px-8 py-3 rounded-full text-white font-semibold bg-gradient-to-r from-pink-500 to-red-500 shadow-lg hover:scale-110 transition duration-300">
-                Tap me 💌
+                Tap more for effects 🩵 
                 </button>
             </div>
     
             <!-- Hidden Love Message -->
             <div id="loveMessage"
-                class="hidden mt-6 text-xl font-semibold text-pink-200 animate-pulse">
-                I love you more more and more Mahal! 💞
+                class="hidden mt-6 text-xl font-semibold text-pink-700 animate-pulse">
+                Happy Valentine's Day Mahal! 💞
             </div>
             </div>
         </div>
@@ -247,7 +260,7 @@
     const heart = document.createElement("div");
     heart.classList.add("heart-rain");
 
-    heart.innerText = "💖";
+    heart.innerText = "🩵";
 
     // Random horizontal position
     heart.style.left = Math.random() * 100 + "vw";
@@ -299,5 +312,68 @@
           }
         });
 
-</script>
+        // Each 'delay' is how long that specific line stays on screen (in milliseconds)
+        const lyricData = [
+            { text: "Do you think I have forgotten?", delay: 4700 },
+            { text: "Do you think I have forgotten?", delay: 4700 },
+            { text: "Do you think I have forgotten about you?", delay: 9150 },
+            { text: "And there was something 'bout you that now I can't remember", delay: 4900 },
+            { text: "It's the same damn thing that made my heart surrender", delay: 4700 },
+            { text: "And I miss you on a train, I miss you in the morning", delay: 4600 },
+            { text: "I never know what to think about", delay: 3000 },
+            { text: "I think about you (so don't let go)", delay: 5000 },
+            { text: "About you (so don't let go)", delay: 4900 },
+            { text: "Do you think I have forgotten?", delay: 4900 },
+            { text: "ABOUT YOU 💞", delay: 4300 }
+        ];
+
+        let lyricIndex = 0;
+        let lyricTimeout = 0;
+        const lyricsDisplay = document.getElementById("lyricsDisplay");
+        const audio = document.getElementById('backgroundMusic');
+
+        function playNextLine() {
+            if (audio.paused) return;
+
+            const currentLine = lyricData[lyricIndex];
+
+            // Fade out
+            lyricsDisplay.classList.replace("opacity-100", "opacity-0");
+
+            setTimeout(() => {
+                // Change text
+                lyricsDisplay.innerText = currentLine.text;
+                // Fade in
+                lyricsDisplay.classList.replace("opacity-0", "opacity-100");
+
+                // Schedule next line based on the unique delay of the CURRENT line
+                lyricTimeout = setTimeout(() => {
+                    lyricIndex = (lyricIndex + 1) % lyricData.length;
+                    playNextLine();
+                }, currentLine.delay);
+            }, 500);
+        }
+
+        function startMusicAndLyrics() {
+            audio.play().then(() => {
+                if (!lyricTimeout) {
+                    playNextLine();
+                }
+            }).catch(e => console.log("Waiting for interaction..."));
+        }
+
+        // Event Listeners
+        document.addEventListener('click', startMusicAndLyrics, { once: true });
+
+        audio.onpause = () => {
+            clearTimeout(lyricTimeout);
+            lyricTimeout = null;
+        };
+
+        // If the song loops, reset the index to start lyrics from the top
+        audio.onplay = () => {
+            if (!lyricTimeout) playNextLine();
+        };
+
+  </script>
 </html>
